@@ -10,11 +10,23 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.book.bookshop.BookShopDao;
 
-@Service("bookShopService")
+//@Service("bookShopService")
 public class BookShopServiceImpl implements BookShopService {
 	
-	@Autowired
+//	@Autowired
 	private BookShopDao bookshop = null;
+	
+	
+	public BookShopDao getBookshop() {
+		return bookshop;
+	}
+
+
+	public void setBookshop(BookShopDao bookshop) {
+		this.bookshop = bookshop;
+	}
+
+
 	/*
 	 * 注解方式的声明式事务步骤：
 	 * 1.配置事务管理器
@@ -36,8 +48,8 @@ public class BookShopServiceImpl implements BookShopService {
 	 * */
 //	@Transactional(propagation=Propagation.REQUIRED, 
 //			isolation=Isolation.READ_COMMITTED,readOnly=false,timeout=3)
-	@Transactional(propagation=Propagation.REQUIRED, 
-			isolation=Isolation.READ_COMMITTED,readOnly=false)
+//	@Transactional(propagation=Propagation.REQUIRED, 
+//			isolation=Isolation.READ_COMMITTED,readOnly=false)
 	@Override
 	public void purchase(String username, String isbn) {
 		

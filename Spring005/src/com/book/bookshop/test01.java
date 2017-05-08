@@ -19,7 +19,7 @@ public class test01 {
 	
 	{
 		
-		ctx = new ClassPathXmlApplicationContext("jdbcTest.xml");
+		ctx = new ClassPathXmlApplicationContext("jdbcTest2.txt-xml.xml");
 		bookshop = ctx.getBean(BookShopDao.class);
 		bss = ctx.getBean(BookShopService.class);
 		cashier = ctx.getBean(Cashier.class);

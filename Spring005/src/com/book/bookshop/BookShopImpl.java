@@ -7,10 +7,20 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
-@Repository("bookShopDao")
+//@Repository("bookShopDao")
 public class BookShopImpl implements BookShopDao {
-	@Autowired
+//	@Autowired
+	//使用xml文件进行配置
 	private JdbcTemplate JdbcTemplate;
+	//需要getter和setter
+	public JdbcTemplate getJdbcTemplate() {
+		return JdbcTemplate;
+	}
+
+	public void setJdbcTemplate(JdbcTemplate jdbcTemplate) {
+		JdbcTemplate = jdbcTemplate;
+	}
+
 	@Override
 	public int findBookPriceByIsbn(String isbn) {
 		String sql = "SELECT price from book WHERE isbn=?";

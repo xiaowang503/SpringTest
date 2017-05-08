@@ -5,12 +5,20 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-@Service("cashier")
+//@Service("cashier")
 public class CashierImpl implements Cashier {
 	
-	@Autowired
+//	@Autowired
+	
 	
 	private BookShopService bookShopService;
+	
+	public BookShopService getBookShopService() {
+		return bookShopService;
+	}
+	public void setBookShopService(BookShopService bookShopService) {
+		this.bookShopService = bookShopService;
+	}
 	@Override
 	public void checkOut(String username, List<String> isbns) {
 		

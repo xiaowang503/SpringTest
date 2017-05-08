@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.3.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.3.xsd">
+	
+	<!-- 自动导包 -->
+	<context:component-scan base-package="com.book.bookshop"></context:component-scan>
+	<!-- 导入资源文件 -->
+	<context:property-placeholder  location="classpath:db.properties"/>
+	
+	<!-- 配置c3p0数据源 -->
+	<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+		<property name="user" value="${jdbc.user}"></property>
+		<property name="password" value="${jdbc.password}"></property>
+		<property name="driverClass" value="${jdbc.driverClass}"></property>
+		<property name="jdbcUrl" value="${jdbc.jdbcUrl}"></property>
+		<property name="initialPoolSize" value="${jdbc.initialPoolSize}"></property>
+		<property name="maxPoolSize" value="${jdbc.maxPoolSize}"></property>
+	</bean>
+	
+	<!-- 配置Spring的jdbcTemplate -->
+	<bean id="jdbctemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+		<property name="dataSource" ref="dataSource"></property>
+	</bean>
+
+	<!-- 配置 NamedParameterJdbcTemplate,该对象可以使用具名参数，其没有无参数的构造器。所以必须为其构造器指定参数
+	<bean id="NamedParameterJdbcTemplate" 
+	class="org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate">
+		<constructor-arg ref="dataSource"></constructor-arg>
+	</bean>
+	 配置事务管理器 
+	<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource"></property>
+	</bean>
+	启用事物注解
+	<tx:annotation-driven transaction-manager="transactionManager"/>
+	-->
+	
+	
+	<!-- 通过XML文件配置Spring -->
+	
+	<!-- 配置bean -->
+	<bean id="bookshop" class="com.book.bookshop.BookShopImpl">
+		<property name="jdbcTemplate" ref="jdbctemplate"></property>
+	</bean>
+	
+	<bean id="bookshopservice" class="com.book.bookshop.bookshopservice.BookShopServiceImpl">
+		<property name="bookshop" ref="bookshop"></property>
+	</bean>
+	
+	<bean id="cashier" class="com.book.bookshop.bookshopservice.CashierImpl">
+		<property name="bookShopService" ref="bookshopservice"></property>
+	</bean>
+	
+	<!--1.配置事务管理器 -->
+	<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource"></property>
+	</bean>
+	
+	<!-- 2.配置事务属性 -->
+	<tx:advice id="txAdvice" transaction-manager="transactionManager">
+		<tx:attributes>
+			<!-- 根据方法名指定事务属性    <tx:method name="purchase" propagation="REQUIRES_NEW"/>-->
+			<tx:method name="*"/>
+		</tx:attributes>
+	</tx:advice>
+	
+	<!-- 3. 配置事务切入点，以及把事务切入点和事务属性联系起来
+		注意* 号后面必须要有空格
+	 -->
+	<aop:config>
+		<aop:pointcut expression="execution(* com.book.bookshop.bookshopservice.BookShopService.*(..))" 
+		id="txPointcut"/>
+		
+		<aop:advisor advice-ref="txAdvice" pointcut-ref="txPointcut"/>
+	</aop:config>
+	
+</beans>
